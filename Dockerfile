@@ -1,11 +1,11 @@
 # ==========================================
 # Stage 1: Build React 19 Frontend
 # ==========================================
-FROM node:20-alpine AS frontend-builder
+FROM node:20-slim AS frontend-builder
 WORKDIR /app/frontend
 
-COPY frontend/package*.json ./
-RUN npm ci
+COPY frontend/package.json ./
+RUN npm install
 
 COPY frontend/ ./
 RUN npm run build
@@ -39,11 +39,10 @@ COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
 WORKDIR /app/backend
 
-# Collect static files and migrate internal database
+# Collect static files
 RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
 # Start Gunicorn server with automatic migrations
 CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120"]
-
