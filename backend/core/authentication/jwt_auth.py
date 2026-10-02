@@ -128,6 +128,8 @@ class JWTAuthentication(BaseAuthentication):
             raise AuthenticationFailed("Malformed authentication token.")
 
         user_doc = users_repo.get_by_id(user_id)
+        if not user_doc and payload.get("email"):
+            user_doc = users_repo.get_by_email(payload.get("email"))
         if not user_doc:
             raise AuthenticationFailed("User not found or account removed.")
 

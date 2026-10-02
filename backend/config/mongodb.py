@@ -34,9 +34,16 @@ def seed_default_hotel_data(db):
         from datetime import datetime, timezone
         now = datetime.now(timezone.utc)
 
+        from bson import ObjectId
+        ADMIN_ID = ObjectId("000000000000000000000001")
+        MANAGER_ID = ObjectId("000000000000000000000002")
+        RECEPTION_ID = ObjectId("000000000000000000000003")
+        ACCOUNTS_ID = ObjectId("000000000000000000000004")
+
         # 1. Seed Default Users
         seed_users = [
             {
+                "_id": ADMIN_ID,
                 "name": "GoldenSwan Admin",
                 "email": "admin@goldenswan.com",
                 "password_hash": hash_password("Admin@12345"),
@@ -48,6 +55,7 @@ def seed_default_hotel_data(db):
                 "updated_at": now,
             },
             {
+                "_id": MANAGER_ID,
                 "name": "Vikram Singh (Manager)",
                 "email": "manager@goldenswan.com",
                 "password_hash": hash_password("Manager@12345"),
@@ -59,6 +67,7 @@ def seed_default_hotel_data(db):
                 "updated_at": now,
             },
             {
+                "_id": RECEPTION_ID,
                 "name": "Priya Sharma (Receptionist)",
                 "email": "reception@goldenswan.com",
                 "password_hash": hash_password("Reception@12345"),
@@ -70,6 +79,7 @@ def seed_default_hotel_data(db):
                 "updated_at": now,
             },
             {
+                "_id": ACCOUNTS_ID,
                 "name": "Ramesh Gupta (Accountant)",
                 "email": "accounts@goldenswan.com",
                 "password_hash": hash_password("Accounts@12345"),
