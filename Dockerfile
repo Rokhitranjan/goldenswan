@@ -4,6 +4,8 @@
 FROM node:20-slim AS frontend-builder
 WORKDIR /app/frontend
 
+ENV VITE_API_URL=/api
+
 COPY frontend/package.json ./
 RUN npm install
 
