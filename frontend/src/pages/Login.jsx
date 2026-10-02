@@ -27,8 +27,23 @@ export const Login = () => {
         setError(res.message || 'Authentication failed. Please check credentials.');
       }
     } catch (err) {
-      const msg = err.response?.data?.message || 'Unable to connect to GoldenSwan API service.';
-      setError(msg);
+      if (err.code === 'ECONNABORTED' || !err.response) {
+        setError('Cloud server is waking up from standby. Retrying automatically...');
+        try {
+          // Wait 2 seconds and retry once
+          await new Promise((r) => setTimeout(r, 2000));
+          const retryRes = await login(email, password);
+          if (retryRes.success) {
+            navigate('/dashboard');
+            return;
+          }
+        } catch {
+          setError('Cloud server is finishing its startup. Please click "Sign In to Dashboard" again now.');
+        }
+      } else {
+        const msg = err.response?.data?.message || 'Unable to connect to GoldenSwan API service. Please try again.';
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }
