@@ -27,6 +27,16 @@ def seed_default_hotel_data(db):
     if the database is currently empty.
     """
     try:
+        from datetime import datetime, timezone
+        from bson import ObjectId
+        from core.authentication.jwt_auth import hash_password
+
+        ADMIN_ID = ObjectId("000000000000000000000001")
+        MANAGER_ID = ObjectId("000000000000000000000002")
+        RECEPTION_ID = ObjectId("000000000000000000000003")
+        ACCOUNTS_ID = ObjectId("000000000000000000000004")
+        now = datetime.now(timezone.utc)
+
         # 1. Seed Default Users (if not already seeded)
         if db["users"].count_documents({}) == 0:
             seed_users = [
