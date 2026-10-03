@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "sri-bogar-arogyalaya"
+  },
+  "targets": {
+    "sri-bogar-arogyalaya": {
+      "hosting": {
+        "pammal": [
+          "pammal-hotel"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

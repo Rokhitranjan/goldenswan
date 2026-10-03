@@ -1,0 +1,27 @@
+name: 24/7 Keep-Alive Pinger
+
+on:
+  schedule:
+    # Run every 10 minutes to prevent Render free-tier cold starts
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render Backend
+        run: |
+          echo "Pinging GoldenSwan Render backend..."
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://goldenswan-hotel.onrender.com/api/health/)
+          echo "HTTP Status: $HTTP_STATUS"
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "Non-200 status, retrying in 5 seconds..."
+            sleep 5
+            curl -s -f https://goldenswan-hotel.onrender.com/api/health/ || true
+          fi
+
+      - name: Ping Firebase Edge CDN Frontend
+        run: |
+          echo "Pinging Firebase Edge CDN frontend..."
+          curl -s -o /dev/null -w "%{http_code}" https://pammal-hotel.web.app
