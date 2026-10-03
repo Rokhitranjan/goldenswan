@@ -120,12 +120,12 @@ class Command(BaseCommand):
 
         self.stdout.write("Setting up base hotel reference data...")
 
-        # Base Room Types
+        # Base Pammal Hotel Room Types
         default_room_types = [
-            {"name": "Deluxe Room", "description": "Spacious room with king bed, balcony, and city view.", "base_price": 3500.0},
-            {"name": "Executive Suite", "description": "Luxury suite with living room, minibar, and complimentary breakfast.", "base_price": 6500.0},
-            {"name": "Standard Single", "description": "Cozy single room for business travelers.", "base_price": 2200.0},
-            {"name": "Presidential Suite", "description": "Ultra luxury suite with panoramic views, jacuzzi, and dedicated butler.", "base_price": 12000.0},
+            {"name": "Acacia Room", "description": "Single occupancy room for 1 person at Pammal Hotel.", "base_price": 2500.0, "max_occupancy": 1},
+            {"name": "Oak Room", "description": "Double occupancy room for 2 persons at Pammal Hotel.", "base_price": 2800.0, "max_occupancy": 2},
+            {"name": "Maple Room", "description": "Triple occupancy room for 3 persons at Pammal Hotel.", "base_price": 3500.0, "max_occupancy": 3},
+            {"name": "Mahogany Room", "description": "Luxury family suite for 4 persons at Pammal Hotel.", "base_price": 4000.0, "max_occupancy": 4},
         ]
         for rt in default_room_types:
             if not room_types_repo.get_by_name(rt["name"]):

@@ -238,7 +238,7 @@ export const Rooms = () => {
                 />
 
                 <div>
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <span className="text-xl font-extrabold text-slate-100 tracking-tight">
                         #{room.room_number}
@@ -250,8 +250,14 @@ export const Rooms = () => {
                     <StatusBadge status={room.status} size="sm" />
                   </div>
 
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <span className="text-xs font-bold text-amber-300 tracking-wide">
+                      {room.room_type_name || room.description || 'Pammal Hotel Room'}
+                    </span>
+                  </div>
+
                   <div className="text-xs text-slate-400 mb-3 line-clamp-1">
-                    {room.description || 'Standard hotel guest accommodation.'}
+                    {room.description || 'Pammal Hotel guest accommodation.'}
                   </div>
 
                   <div className="flex items-center justify-between py-2 border-y border-slate-800/60 mb-3 text-xs">

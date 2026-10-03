@@ -49,7 +49,29 @@ class RoomsRepository(BaseRepository):
             oid = to_object_id(room_type_id)
             if oid:
                 query["room_type_id"] = oid
-        return self.find(query, sort=[("room_number", 1)])
+        rooms = self.find(query, sort=[("room_number", 1)])
+        try:
+            from core.repositories.room_types_repository import room_types_repo
+            types_lookup = {str(t["_id"]): t.get("name") for t in room_types_repo.list_active()}
+            for r in rooms:
+                tid = str(r.get("room_type_id"))
+                if tid in types_lookup and not r.get("room_type_name"):
+                    r["room_type_name"] = types_lookup[tid]
+        except Exception:
+            pass
+        return rooms
+
+    def get_by_id(self, item_id: Union[str, ObjectId]) -> Optional[Dict[str, Any]]:
+        room = super().get_by_id(item_id)
+        if room and "room_type_id" in room and not room.get("room_type_name"):
+            try:
+                from core.repositories.room_types_repository import room_types_repo
+                t = room_types_repo.get_by_id(room["room_type_id"])
+                if t:
+                    room["room_type_name"] = t.get("name")
+            except Exception:
+                pass
+        return room
 
     def update_status(self, room_id: Union[str, ObjectId], new_status: str) -> bool:
         oid = to_object_id(room_id)

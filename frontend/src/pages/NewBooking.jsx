@@ -198,7 +198,7 @@ export const NewBooking = () => {
                 <option value="">Choose Available Room...</option>
                 {rooms.map((r) => (
                   <option key={r.id || r._id} value={r.id || r._id}>
-                    Room #{r.room_number} (Floor {r.floor}) - {r.status} - {formatCurrency(r.price)}/night
+                    Room #{r.room_number} ({r.room_type_name || 'Room'}, Floor {r.floor}) — {formatCurrency(r.price)}/night [{r.status}]
                   </option>
                 ))}
               </select>

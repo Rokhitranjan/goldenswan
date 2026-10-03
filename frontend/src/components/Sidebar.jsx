@@ -108,7 +108,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed, mobileOpen, setMobileOpen
                   GOLDENSWAN
                 </span>
                 <span className="text-[10px] tracking-widest text-slate-400 uppercase font-semibold">
-                  Hotel & Suites
+                  Pammal Hotel & Suites
                 </span>
               </div>
             )}

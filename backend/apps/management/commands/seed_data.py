@@ -87,68 +87,59 @@ class Command(BaseCommand):
                 users_repo.create_user(u)
                 self.stdout.write(f" + Created user: {u['email']} [{u['role']}]")
 
-        # 2. Seed Room Types
+        # 2. Seed Pammal Hotel Room Types
+        pammal_types = [
+            {"name": "Acacia Room", "base_price": 2500.0, "max_occupancy": 1, "description": "Single occupancy room for 1 person at Pammal Hotel."},
+            {"name": "Oak Room", "base_price": 2800.0, "max_occupancy": 2, "description": "Double occupancy room for 2 persons at Pammal Hotel."},
+            {"name": "Maple Room", "base_price": 3500.0, "max_occupancy": 3, "description": "Triple occupancy room for 3 persons at Pammal Hotel."},
+            {"name": "Mahogany Room", "base_price": 4000.0, "max_occupancy": 4, "description": "Luxury family suite for 4 persons at Pammal Hotel."},
+        ]
         types_map = {}
-        for rt in room_types_repo.list_active():
-            types_map[rt["name"]] = rt["_id"]
+        for pt in pammal_types:
+            existing = room_types_repo.get_by_name(pt["name"])
+            if not existing:
+                tid = room_types_repo.create_room_type(pt)
+                types_map[pt["name"]] = tid
+                self.stdout.write(f" + Created room type: {pt['name']} [Rs. {pt['base_price']}]")
+            else:
+                types_map[pt["name"]] = existing["_id"]
 
-        deluxe_id = types_map.get("Deluxe Room")
-        exec_id = types_map.get("Executive Suite")
-        single_id = types_map.get("Standard Single")
-        pres_id = types_map.get("Presidential Suite")
-
-        # 3. Seed 30 Rooms across 3 floors
-        # Floor 1: Standard Singles & Deluxe
-        # Floor 2: Deluxe & Executive Suites
-        # Floor 3: Executive & Presidential Suites
-        rooms_spec = []
-        for i in range(1, 11):
-            num = f"10{i}" if i < 10 else f"1{i}"
-            is_single = i <= 5
-            rooms_spec.append({
-                "room_number": num,
-                "room_type_id": single_id if is_single else deluxe_id,
-                "floor": 1,
-                "price": 2200.0 if is_single else 3500.0,
-                "capacity": 1 if is_single else 2,
-                "status": "AVAILABLE",
-                "description": "Ground floor comfortable room with garden access.",
-                "amenities": ["Wi-Fi", "Air Conditioning", "Smart TV", "Mini Fridge"] if not is_single else ["Wi-Fi", "Air Conditioning", "Work Desk"],
-            })
-
-        for i in range(1, 11):
-            num = f"20{i}" if i < 10 else f"2{i}"
-            is_exec = i > 6
-            rooms_spec.append({
-                "room_number": num,
-                "room_type_id": exec_id if is_exec else deluxe_id,
-                "floor": 2,
-                "price": 6500.0 if is_exec else 3800.0,
-                "capacity": 3 if is_exec else 2,
-                "status": "AVAILABLE",
-                "description": "Second floor room with city skyline views.",
-                "amenities": ["High-speed Wi-Fi", "Air Conditioning", "Balcony", "Tea/Coffee Maker", "Bathtub"] if is_exec else ["Wi-Fi", "Air Conditioning", "Smart TV"],
-            })
-
-        for i in range(1, 11):
-            num = f"30{i}" if i < 10 else f"3{i}"
-            is_pres = i >= 9
-            rooms_spec.append({
-                "room_number": num,
-                "room_type_id": pres_id if is_pres else exec_id,
-                "floor": 3,
-                "price": 12500.0 if is_pres else 6800.0,
-                "capacity": 4 if is_pres else 3,
-                "status": "AVAILABLE",
-                "description": "Penthouse level premium accommodation.",
-                "amenities": ["Jacuzzi", "King Bed", "Private Terrace", "Complimentary Lounge Access", "Butler Service"] if is_pres else ["High-speed Wi-Fi", "Balcony", "Living Area"],
-            })
+        # 3. Seed 19 Pammal Hotel Rooms across 2 floors
+        # 4 Acacia (101-104), 8 Oak (105-108, 201-204), 5 Maple (205-209), 2 Mahogany (210-211)
+        rooms_spec = [
+            # Acacia (4 rooms @ Rs. 2500, 1 person)
+            {"room_number": "101", "room_type_id": types_map.get("Acacia Room"), "floor": 1, "price": 2500.0, "capacity": 1, "description": "Acacia Room #101 (1 Person)", "amenities": ["Wi-Fi", "Air Conditioning", "Single Bed", "Work Desk", "Hot Water", "Daily Housekeeping"]},
+            {"room_number": "102", "room_type_id": types_map.get("Acacia Room"), "floor": 1, "price": 2500.0, "capacity": 1, "description": "Acacia Room #102 (1 Person)", "amenities": ["Wi-Fi", "Air Conditioning", "Single Bed", "Work Desk", "Hot Water", "Daily Housekeeping"]},
+            {"room_number": "103", "room_type_id": types_map.get("Acacia Room"), "floor": 1, "price": 2500.0, "capacity": 1, "description": "Acacia Room #103 (1 Person)", "amenities": ["Wi-Fi", "Air Conditioning", "Single Bed", "Work Desk", "Hot Water", "Daily Housekeeping"]},
+            {"room_number": "104", "room_type_id": types_map.get("Acacia Room"), "floor": 1, "price": 2500.0, "capacity": 1, "description": "Acacia Room #104 (1 Person)", "amenities": ["Wi-Fi", "Air Conditioning", "Single Bed", "Work Desk", "Hot Water", "Daily Housekeeping"]},
+            # Oak (8 rooms @ Rs. 2800, 2 persons)
+            {"room_number": "105", "room_type_id": types_map.get("Oak Room"), "floor": 1, "price": 2800.0, "capacity": 2, "description": "Oak Room #105 (2 Persons)", "amenities": ["High-speed Wi-Fi", "Air Conditioning", "Smart TV", "Double Bed", "Ensuite Bath", "Hot Water"]},
+            {"room_number": "106", "room_type_id": types_map.get("Oak Room"), "floor": 1, "price": 2800.0, "capacity": 2, "description": "Oak Room #106 (2 Persons)", "amenities": ["High-speed Wi-Fi", "Air Conditioning", "Smart TV", "Double Bed", "Ensuite Bath", "Hot Water"]},
+            {"room_number": "107", "room_type_id": types_map.get("Oak Room"), "floor": 1, "price": 2800.0, "capacity": 2, "description": "Oak Room #107 (2 Persons)", "amenities": ["High-speed Wi-Fi", "Air Conditioning", "Smart TV", "Double Bed", "Ensuite Bath", "Hot Water"]},
+            {"room_number": "108", "room_type_id": types_map.get("Oak Room"), "floor": 1, "price": 2800.0, "capacity": 2, "description": "Oak Room #108 (2 Persons)", "amenities": ["High-speed Wi-Fi", "Air Conditioning", "Smart TV", "Double Bed", "Ensuite Bath", "Hot Water"]},
+            {"room_number": "201", "room_type_id": types_map.get("Oak Room"), "floor": 2, "price": 2800.0, "capacity": 2, "description": "Oak Room #201 (2 Persons)", "amenities": ["High-speed Wi-Fi", "Air Conditioning", "Smart TV", "Double Bed", "Ensuite Bath", "Hot Water"]},
+            {"room_number": "202", "room_type_id": types_map.get("Oak Room"), "floor": 2, "price": 2800.0, "capacity": 2, "description": "Oak Room #202 (2 Persons)", "amenities": ["High-speed Wi-Fi", "Air Conditioning", "Smart TV", "Double Bed", "Ensuite Bath", "Hot Water"]},
+            {"room_number": "203", "room_type_id": types_map.get("Oak Room"), "floor": 2, "price": 2800.0, "capacity": 2, "description": "Oak Room #203 (2 Persons)", "amenities": ["High-speed Wi-Fi", "Air Conditioning", "Smart TV", "Double Bed", "Ensuite Bath", "Hot Water"]},
+            {"room_number": "204", "room_type_id": types_map.get("Oak Room"), "floor": 2, "price": 2800.0, "capacity": 2, "description": "Oak Room #204 (2 Persons)", "amenities": ["High-speed Wi-Fi", "Air Conditioning", "Smart TV", "Double Bed", "Ensuite Bath", "Hot Water"]},
+            # Maple (5 rooms @ Rs. 3500, 3 persons)
+            {"room_number": "205", "room_type_id": types_map.get("Maple Room"), "floor": 2, "price": 3500.0, "capacity": 3, "description": "Maple Room #205 (3 Persons)", "amenities": ["High-speed Wi-Fi", "Air Conditioning", "Smart TV", "Mini Fridge", "Ensuite Bath", "Tea/Coffee Maker"]},
+            {"room_number": "206", "room_type_id": types_map.get("Maple Room"), "floor": 2, "price": 3500.0, "capacity": 3, "description": "Maple Room #206 (3 Persons)", "amenities": ["High-speed Wi-Fi", "Air Conditioning", "Smart TV", "Mini Fridge", "Ensuite Bath", "Tea/Coffee Maker"]},
+            {"room_number": "207", "room_type_id": types_map.get("Maple Room"), "floor": 2, "price": 3500.0, "capacity": 3, "description": "Maple Room #207 (3 Persons)", "amenities": ["High-speed Wi-Fi", "Air Conditioning", "Smart TV", "Mini Fridge", "Ensuite Bath", "Tea/Coffee Maker"]},
+            {"room_number": "208", "room_type_id": types_map.get("Maple Room"), "floor": 2, "price": 3500.0, "capacity": 3, "description": "Maple Room #208 (3 Persons)", "amenities": ["High-speed Wi-Fi", "Air Conditioning", "Smart TV", "Mini Fridge", "Ensuite Bath", "Tea/Coffee Maker"]},
+            {"room_number": "209", "room_type_id": types_map.get("Maple Room"), "floor": 2, "price": 3500.0, "capacity": 3, "description": "Maple Room #209 (3 Persons)", "amenities": ["High-speed Wi-Fi", "Air Conditioning", "Smart TV", "Mini Fridge", "Ensuite Bath", "Tea/Coffee Maker"]},
+            # Mahogany (2 rooms @ Rs. 4000, 4 persons)
+            {"room_number": "210", "room_type_id": types_map.get("Mahogany Room"), "floor": 2, "price": 4000.0, "capacity": 4, "description": "Mahogany Room #210 (4 Persons)", "amenities": ["Ultra Wi-Fi", "Air Conditioning", "Smart TV", "Living Lounge", "Mini Fridge", "Bathtub", "Complimentary Breakfast"]},
+            {"room_number": "211", "room_type_id": types_map.get("Mahogany Room"), "floor": 2, "price": 4000.0, "capacity": 4, "description": "Mahogany Room #211 (4 Persons)", "amenities": ["Ultra Wi-Fi", "Air Conditioning", "Smart TV", "Living Lounge", "Mini Fridge", "Bathtub", "Complimentary Breakfast"]},
+        ]
 
         for r in rooms_spec:
-            if not rooms_repo.get_by_room_number(r["room_number"]):
+            existing = rooms_repo.get_by_room_number(r["room_number"])
+            if not existing:
                 rooms_repo.create_room(r)
+            else:
+                rooms_repo.update_by_id(existing["_id"], r)
 
-        self.stdout.write(f" - Ensured 30 hotel rooms created across floors 1, 2, and 3.")
+        self.stdout.write(f" - Ensured 19 official Pammal hotel rooms configured across Floors 1 and 2.")
 
         # 4. Seed Customers
         seed_customers = [
